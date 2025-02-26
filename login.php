@@ -1,51 +1,129 @@
-<?php session_start() ?>
-<div class="container-fluid">
-	<form action="" id="login-frm">
-		<div class="form-group">
-			<label for="" class="control-label">Email</label>
-			<input type="email" name="email" required="" class="form-control">
-		</div>
-		<div class="form-group">
-			<label for="" class="control-label">Password</label>
-			<input type="password" name="password" required="" class="form-control">
-			<small><a href="javascript:void(0)" id="new_account">Create New Account</a></small>
-		</div>
-		<button class="button btn btn-info btn-sm">Login</button>
-	</form>
-</div>
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Admin | Doctor's Appointment System</title>
+ 	
+
+<?php include('./header.php'); ?>
+<?php include('./db_connect.php'); ?>
+<?php 
+session_start();
+if(isset($_SESSION['login_id']))
+header("location:index.php?page=home");
+
+?>
+
+</head>
 <style>
-	#uni_modal .modal-footer{
-		display:none;
+	body{
+		width: 100%;
+	    height: calc(100%);
+	    /*background: #007bff;*/
 	}
+	main#main{
+		width:100%;
+		height: calc(100%);
+		background:white;
+	}
+	#login-right{
+		position: absolute;
+		right:0;
+		width:40%;
+		height: calc(100%);
+		background:white;
+		display: flex;
+		align-items: center;
+	}
+	#login-left{
+		position: absolute;
+		left:0;
+		width:60%;
+		height: calc(100%);
+		background:#59b6ec61;
+		display: flex;
+		align-items: center;
+		background: url(../assets/img/medical-appointment-cover.jpg);
+	    background-repeat: no-repeat;
+	    background-size: cover;
+	}
+	#login-right .card{
+		margin: auto
+	}
+	.logo {
+    margin: auto;
+    font-size: 8rem;
+    background: #90ffff87;
+    padding: .5em 0.7em;
+    border-radius: 50% 50%;
+    color: #000000b3;
+}
+
 </style>
 
+<body>
+
+
+  <main id="main" class=" bg-dark">
+  		<div id="login-left">
+  			<div class="logo">
+  				<span class="fa fa-laptop-medical"></span>
+  			</div>
+  		</div>
+  		<div id="login-right">
+  			<div class="card col-md-8">
+  				<div class="card-body">
+  					<form id="login-form" >
+  						<div class="form-group">
+  							<label for="username" class="control-label">Username</label>
+  							<input type="text" id="username" name="username" class="form-control">
+  						</div>
+  						<div class="form-group">
+  							<label for="password" class="control-label">Password</label>
+  							<input type="password" id="password" name="password" class="form-control">
+  						</div>
+  						<center><button class="btn-sm btn-block btn-wave col-md-4 btn-primary">Login</button></center>
+  					</form>
+  				</div>
+  			</div>
+  		</div>
+   
+
+  </main>
+
+  <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
+
+
+</body>
 <script>
-	$('#new_account').click(function(){
-		uni_modal("Create an Account",'signup.php?redirect=index.php?page=checkout')
-	})
-	$('#login-frm').submit(function(e){
+	$('#login-form').submit(function(e){
 		e.preventDefault()
-		$('#login-frm button[type="submit"]').attr('disabled',true).html('Logging in...');
+		$('#login-form button[type="button"]').attr('disabled',true).html('Logging in...');
 		if($(this).find('.alert-danger').length > 0 )
 			$(this).find('.alert-danger').remove();
 		$.ajax({
-			url:'admin/ajax.php?action=login2',
+			url:'ajax.php?action=login',
 			method:'POST',
 			data:$(this).serialize(),
 			error:err=>{
 				console.log(err)
-		$('#login-frm button[type="submit"]').removeAttr('disabled').html('Login');
+		$('#login-form button[type="button"]').removeAttr('disabled').html('Login');
 
 			},
 			success:function(resp){
 				if(resp == 1){
-					location.href ='<?php echo isset($_GET['redirect']) ? $_GET['redirect'] : 'index.php?page=home' ?>';
+					location.href ='index.php?page=home';
+				}else if(resp == 2){
+					location.href ='voting.php';
 				}else{
-					$('#login-frm').prepend('<div class="alert alert-danger">Email or password is incorrect.</div>')
-					$('#login-frm button[type="submit"]').removeAttr('disabled').html('Login');
+					$('#login-form').prepend('<div class="alert alert-danger">Username or password is incorrect.</div>')
+					$('#login-form button[type="button"]').removeAttr('disabled').html('Login');
 				}
 			}
 		})
 	})
-</script>
+</script>	
+</html>
